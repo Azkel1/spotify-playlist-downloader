@@ -1,5 +1,9 @@
 {
-	"tasks": {
-		"start": "deno run --allow-sys --allow-net --allow-read --allow-env --allow-run src/main.ts"
-	}
+  "tasks": {
+    "start": "deno run --allow-sys --allow-net --allow-read --allow-env --allow-run src/main.ts"
+  },
+  "imports": {
+    "@hono/hono": "jsr:@hono/hono@^4.5.9",
+    "@valibot/valibot": "jsr:@valibot/valibot@^0.40.0"
+  }
 }

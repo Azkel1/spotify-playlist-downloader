@@ -3,25 +3,27 @@ import { downloadSongs } from "./downloader.ts";
 import { create_spotify_api_client } from "./spotify_api.ts";
 
 try {
-  const playlist_id = prompt("Enter the playlist ID:");
+    const spotify_api = await create_spotify_api_client(
+        config.client_id,
+        config.client_secret,
+    );
 
-  if (playlist_id === null) {
-    console.error("A playlist ID is required");
-    Deno.exit(1);
-  }
+    const playlist_id = prompt("Enter the playlist ID:")?.trim();
 
-  console.log(playlist_id);
+    if (!playlist_id) {
+        console.error("A playlist ID is required");
+        Deno.exit(1);
+    }
 
-  const spotify_api = await create_spotify_api_client(
-    config.client_id,
-    config.client_secret,
-  );
+    console.log("Retrieving song list...");
+    const songs = await spotify_api.get_playlist_song_titles(
+        playlist_id,
+    );
 
-  const songs = await spotify_api.get_playlist_song_titles(
-    playlist_id,
-  );
+    const doDownload = confirm(`Download ${songs.length} songs?`);
 
-  downloadSongs(songs);
+    if (doDownload) downloadSongs(songs);
+    else console.error("Download cancelled");
 } catch (err) {
-  console.error(`%c${err.message}`, "color: red;");
+    console.error(`%c${err.message}`, "color: red;");
 }
