@@ -23,6 +23,7 @@ export const spotify_auth_token_schema = v.object({
 export const spotify_playlist_tracks_response_schema = v.object({
     items: v.array(v.object({
         track: v.object({
+            id: v.string(),
             name: v.string(),
             artists: v.array(v.object({
                 name: v.string(),
@@ -32,8 +33,15 @@ export const spotify_playlist_tracks_response_schema = v.object({
 });
 
 // #region ---------------------------------------- Typescript Types ----------------------------------------
+export type SpotifySong = {
+    id: string;
+    name: string;
+};
 export type SpotifyAPI = SpotifyAuth & {
-    get_playlist_song_titles(playlist_id: string): Promise<string[]> | string[];
+    get_playlist_songs(
+        playlist_id: string,
+        excluded_ids: Array<string>,
+    ): Promise<SpotifySong[]> | SpotifySong[];
 };
 
 export type SpotifyAuth = v.InferOutput<typeof spotify_auth_token_schema>;

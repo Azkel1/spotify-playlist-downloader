@@ -15,12 +15,27 @@ try {
         Deno.exit(1);
     }
 
+    const already_downloaded_songs = Deno.readTextFileSync(
+        `${config.output_dir}/download.log`,
+    ).split("\n");
     console.log("Retrieving song list...");
-    const songs = await spotify_api.get_playlist_song_titles(
+    const songs = await spotify_api.get_playlist_songs(
         playlist_id,
+        already_downloaded_songs,
     );
 
-    const doDownload = confirm(`Download ${songs.length} songs?`);
+    if (songs.length === 0) {
+        console.log(
+            "No songs to download, make sure that the playlist id is correct. It is also possible that all songs are already marked as downloaded, remove 'download.log' from the output directory and try again",
+        );
+        Deno.exit(1);
+    }
+
+    const doDownload = confirm(
+        already_downloaded_songs.length > 0
+            ? `Download ${songs.length} songs? (${already_downloaded_songs.length} already downloaded)`
+            : `Download ${songs.length} songs?`,
+    );
 
     if (doDownload) downloadSongs(songs);
     else console.error("Download cancelled");

@@ -6,6 +6,7 @@ import {
     spotify_playlist_tracks_response_schema,
     type SpotifyAPI,
     type SpotifyAuth,
+    SpotifySong,
 } from "./schemas.ts";
 
 const SERVER_PORT = 8372;
@@ -21,11 +22,14 @@ export async function create_spotify_api_client(
 
     return {
         ...auth_data,
-        async get_playlist_song_titles(playlist_id) {
+        async get_playlist_songs(playlist_id, excluded_ids) {
             const url = new URL(
                 `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`,
             );
-            url.searchParams.set("fields", "items(track(name,artists(name)))");
+            url.searchParams.set(
+                "fields",
+                "items(track(id,name,artists(name)))",
+            );
 
             const response = await fetch(url, {
                 method: "GET",
@@ -69,18 +73,28 @@ export async function create_spotify_api_client(
                 );
             }
 
-            return parsed_response.output.items.map(({ track }) => {
-                const artists = track.artists.reduce(
-                    (artists_names, artist, index) => {
-                        const separator = index !== 0 ? ", " : "";
+            return parsed_response.output.items.reduce<Array<SpotifySong>>(
+                (list, { track }) => {
+                    if (excluded_ids.includes(track.id)) return list;
 
-                        return artists_names += separator + artist.name;
-                    },
-                    "",
-                );
+                    const artists = track.artists.reduce(
+                        (artists_names, artist, index) => {
+                            const separator = index !== 0 ? ", " : "";
 
-                return `${track.name} ${artists}`;
-            });
+                            return artists_names += separator + artist.name;
+                        },
+                        "",
+                    );
+
+                    list.push({
+                        id: track.id,
+                        name: `${track.name} ${artists}`,
+                    });
+
+                    return list;
+                },
+                [],
+            );
         },
     };
 }
