@@ -1,5 +1,15 @@
 import * as v from "@valibot/valibot";
 
+export const config_file_schema = v.object({
+    client_id: v.string("Missing Spotify API client id ('client_id')"),
+    client_secret: v.string(
+        "Missing Spotify API client secret ('client_secret')",
+    ),
+    output_dir: v.string(
+        "Missing output directory from config file ('output_dir')",
+    ),
+});
+
 export const spotify_auth_token_schema = v.object({
     access_token: v.string(),
     token_type: v.literal("Bearer"),

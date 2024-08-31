@@ -34,6 +34,6 @@ function getDownloadArgs(song: string) {
         "--audio-format",
         "mp3",
         "-o",
-        "songs/%(title)s",
+        `${config.output_dir}/%(title)s`,
     ];
 }

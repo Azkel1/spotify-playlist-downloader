@@ -26,7 +26,7 @@ export async function create_promise_scheduler<TTaskResult>(
 
 		await Promise.race(in_progress.values());
 		console.log(
-			`\x1b[1;33m${task_count - completed}\x1b[0m tasks remaining`,
+			`\x1b[1;33m${task_count - completed}\x1b[0m remaining`,
 		);
 	}
 

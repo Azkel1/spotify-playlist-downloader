@@ -1,4 +1,4 @@
-import config from "../config.json" with { type: "json" };
+import { config } from "./config.ts";
 import { downloadSongs } from "./downloader.ts";
 import { create_spotify_api_client } from "./spotify_api.ts";
 
@@ -26,4 +26,5 @@ try {
     else console.error("Download cancelled");
 } catch (err) {
     console.error(`%c${err.message}`, "color: red;");
+    Deno.exit(1);
 }

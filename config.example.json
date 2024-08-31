@@ -1,4 +1,5 @@
 {
 	"client_id": "<your client id here>",
-	"client_secret": "<your client secret here>"
+	"client_secret": "<your client secret here>",
+	"output_dir": "songs"
 }
